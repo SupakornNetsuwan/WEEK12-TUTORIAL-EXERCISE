@@ -41,7 +41,7 @@
             </a>
             <div class="navbar-dropdown">
               <a class="navbar-item">Profile</a>
-              <a class="navbar-item">Log out</a>
+              <a @click="logout" class="navbar-item">Log out</a>
             </div>
           </div>
 
@@ -58,8 +58,11 @@
         </div>
       </div>
     </nav>
-
-    <router-view :key="$route.fullPath" @auth-change="onAuthChange" :user="user" />
+    <router-view
+      :key="$route.fullPath"
+      @auth-change="onAuthChange"
+      :user="user"
+    />
   </div>
 </template>
 
@@ -77,14 +80,18 @@ export default {
   methods: {
     onAuthChange() {
       const token = localStorage.getItem("token");
-      if (token) {
-        this.getUser();
-      }
+      if (token) this.getUser();
+      else this.user = null;
     },
     getUser() {
       axios.get("/user/me").then(res => {
         this.user = res.data;
       });
+    },
+    logout() {
+      localStorage.removeItem("token");
+      this.onAuthChange();
+      this.$router.push({ path: "/user/login" });
     }
   }
 };

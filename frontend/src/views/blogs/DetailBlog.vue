@@ -125,7 +125,7 @@
                     <div class="level-right">
                       <div class="level-item">
                         <button
-                        
+                        v-if="user.id === comment.comment_by_id || user.role === 'admin'"
                           @click="
                             editToggle = index;
                             editCommentMessage = comment.comment;
@@ -140,7 +140,7 @@
                       </div>
                       <div class="level-item">
                         <button
-                          v-if="user.id === comment.comment_by_id"
+                          v-if="user.id === comment.comment_by_id || user.role === 'admin'"
                           @click="deleteComment(comment.id, index)"
                           class="button is-danger is-outlined"
                         >
@@ -160,7 +160,7 @@
             <router-link class="card-footer-item" to="/"
               >To Home Page</router-link
             >
-            <a v-if="user.id === blog.create_by_id" class="card-footer-item" @click="deleteBlog">
+            <a v-if="user.id === blog.create_by_id  || user.role === 'admin'" class="card-footer-item" @click="deleteBlog">
               <span>Delete this blog</span>
             </a>
           </footer>

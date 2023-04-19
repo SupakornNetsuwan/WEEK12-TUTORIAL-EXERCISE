@@ -28,6 +28,7 @@ CREATE TABLE `users` (
   `picture` varchar(200) DEFAULT NULL,
   `mobile` varchar(10) DEFAULT NULL,
   `join_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `role` VARCHAR(10) NOT NULL DEFAULT 'normal',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -100,8 +101,8 @@ INSERT INTO `blogs` (`id`, `title`, `content`, `status`, `pinned`, `like`, `crea
 (3, 'Where does it come from?', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '01', 0, 3, '2021-03-09 05:14:18', 1);
 
 INSERT INTO `comments` (`id`, `blog_id`, `comment`, `like`, `comment_date`, `comment_by_id`) VALUES
-(1, 1, 'I love your blog!', 0, '2021-03-09 05:14:41', NULL),
-(2, 1, 'Cool :)', 0, '2021-03-09 05:14:54', NULL);
+(1, 1, 'I love your blog!', 0, '2021-03-09 05:14:41', 2),
+(2, 1, 'Cool :)', 0, '2021-03-09 05:14:54', 2);
 
 INSERT INTO `images` (`id`, `blog_id`, `comment_id`, `file_path`, `upload_date`, `update_by_id`, `main`) VALUES
 (1, 1, NULL, '/uploads/cats1.png', '2021-03-16 21:03:36', NULL, 1),

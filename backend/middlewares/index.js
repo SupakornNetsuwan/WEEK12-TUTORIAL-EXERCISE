@@ -21,7 +21,7 @@ async function isLoggedIn(req, res, next) {
 
     // Set user
     const [users] = await pool.query(
-        'SELECT id, username, first_name, last_name, email, picture, mobile, join_date ' +
+        'SELECT id, username, first_name, last_name, email, picture, mobile, join_date, role ' +
         'FROM users WHERE id = ?', [token.user_id]
     )
     req.user = users[0]
@@ -30,7 +30,13 @@ async function isLoggedIn(req, res, next) {
 }
 
 const blogOwner = async (req, res, next) => {
+
+    if (req.user.role === 'admin') {
+        return next()
+    }
+
     const [[blog]] = await pool.query('SELECT * FROM blogs WHERE id=?', [req.params.id])
+
 
     if (blog.create_by_id !== req.user.id) {
         return res.status(403).send('You do not have permission to perform this action')
@@ -40,6 +46,10 @@ const blogOwner = async (req, res, next) => {
 }
 
 const commentOwner = async (req, res, next) => {
+    if (req.user.role === 'admin') {
+        return next()
+    }
+
     const [[comment]] = await pool.query('SELECT * FROM comments WHERE id=?', [req.params.commentId])
 
     if (comment.comment_by_id !== req.user.id) {

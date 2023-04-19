@@ -53,7 +53,7 @@
                   </span>
                 </a>
                 <a
-                  v-if="isBlogOwner(blog)"
+                  v-if="isBlogOwner(blog) || user.role === 'admin'"
                   class="card-footer-item"
                   @click="
                     $router.push({
