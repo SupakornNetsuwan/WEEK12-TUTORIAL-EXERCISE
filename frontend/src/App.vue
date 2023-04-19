@@ -30,9 +30,14 @@
           <div v-if="user" class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
               <figure class="image is-24x24 my-auto">
-                <img class="is-rounded" src="https://bulma.io/images/placeholders/128x128.png">
+                <img
+                  class="is-rounded"
+                  src="https://bulma.io/images/placeholders/128x128.png"
+                />
               </figure>
-              <span class="pl-3">{{ user.first_name }} {{ user.last_name }}</span>
+              <span class="pl-3"
+                >{{ user.first_name }} {{ user.last_name }}</span
+              >
             </a>
             <div class="navbar-dropdown">
               <a class="navbar-item">Profile</a>
@@ -53,17 +58,34 @@
         </div>
       </div>
     </nav>
-    
-    <router-view :key="$route.fullPath"/>
+
+    <router-view :key="$route.fullPath" @auth-change="onAuthChange" :user="user" />
   </div>
 </template>
 
 <script>
+import axios from "@/plugins/axios";
 export default {
-  data () {
+  data() {
     return {
       user: null
+    };
+  },
+  mounted() {
+    this.onAuthChange();
+  },
+  methods: {
+    onAuthChange() {
+      const token = localStorage.getItem("token");
+      if (token) {
+        this.getUser();
+      }
+    },
+    getUser() {
+      axios.get("/user/me").then(res => {
+        this.user = res.data;
+      });
     }
   }
-}
+};
 </script>

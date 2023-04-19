@@ -18,7 +18,7 @@
               <div v-for="image in images" :key="image.id" class="column">
                 <figure class="image">
                   <img
-                    :src="'http://localhost:3000/'+image.file_path"
+                    :src="'http://localhost:3000/' + image.file_path"
                     alt="Placeholder image"
                     style="height: 500px; object-fit: cover;"
                   />
@@ -32,23 +32,41 @@
               <p class="subtitle">Comments</p>
               <div class="columns">
                 <div class="column is-8">
-                  <input type="text" class="input" v-model="commTxt" placeholder="Add new comment" />
+                  <input
+                    type="text"
+                    class="input"
+                    v-model="commTxt"
+                    placeholder="Add new comment"
+                  />
                 </div>
                 <div class="column is-4">
-                  <button @click="addComment" class="button">Add comment</button>
+                  <button @click="addComment" class="button">
+                    Add comment
+                  </button>
                 </div>
               </div>
             </div>
-            <div v-for="(comment,index) in comments" :key="comment.id" class="box">
+            <div
+              v-for="(comment, index) in comments"
+              :key="comment.id"
+              class="box"
+            >
               <article class="media">
                 <div class="media-left">
                   <figure class="image is-64x64">
-                    <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image" />
+                    <img
+                      src="https://bulma.io/images/placeholders/128x128.png"
+                      alt="Image"
+                    />
                   </figure>
                 </div>
-                <div v-if="index===editToggle" class="media-content">
+                <div v-if="index === editToggle" class="media-content">
                   <div class="content">
-                    <input v-model="editCommentMessage" class="input" type="text" />
+                    <input
+                      v-model="editCommentMessage"
+                      class="input"
+                      type="text"
+                    />
                     <p class="is-size-7">{{ comment.comment_date }}</p>
                   </div>
                   <nav class="level">
@@ -63,7 +81,7 @@
                     <div class="level-right">
                       <div class="level-item">
                         <button
-                          @click="saveEditComment(comment.id,index)"
+                          @click="saveEditComment(comment.id, index)"
                           class="button is-primary"
                         >
                           <span>Save Comment</span>
@@ -73,7 +91,10 @@
                         </button>
                       </div>
                       <div class="level-item">
-                        <button @click="editToggle = -1" class="button is-info is-outlined">
+                        <button
+                          @click="editToggle = -1"
+                          class="button is-info is-outlined"
+                        >
                           <span>Cancel</span>
                           <span class="icon is-small">
                             <i class="fas fa-times"></i>
@@ -90,17 +111,25 @@
                   </div>
                   <nav class="level">
                     <div class="level-left">
-                      <a @click="addLikeComment(comment.id)" class="level-item" aria-label="like">
+                      <a
+                        @click="addLikeComment(comment.id)"
+                        class="level-item"
+                        aria-label="like"
+                      >
                         <span class="icon is-small pr-3">
                           <i class="fas fa-heart" aria-hidden="true"></i>
                         </span>
-                        Like ({{comment.like}})
+                        Like ({{ comment.like }})
                       </a>
                     </div>
                     <div class="level-right">
                       <div class="level-item">
                         <button
-                          @click="editToggle = index; editCommentMessage = comment.comment"
+                        
+                          @click="
+                            editToggle = index;
+                            editCommentMessage = comment.comment;
+                          "
                           class="button is-warning"
                         >
                           <span>Edit</span>
@@ -111,6 +140,7 @@
                       </div>
                       <div class="level-item">
                         <button
+                          v-if="user.id === comment.comment_by_id"
                           @click="deleteComment(comment.id, index)"
                           class="button is-danger is-outlined"
                         >
@@ -127,8 +157,10 @@
             </div>
           </div>
           <footer class="card-footer">
-            <router-link class="card-footer-item" to="/">To Home Page</router-link>
-            <a class="card-footer-item" @click="deleteBlog">
+            <router-link class="card-footer-item" to="/"
+              >To Home Page</router-link
+            >
+            <a v-if="user.id === blog.create_by_id" class="card-footer-item" @click="deleteBlog">
               <span>Delete this blog</span>
             </a>
           </footer>
@@ -139,33 +171,36 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from "@/plugins/axios";
 
 export default {
+  props: ["user"],
   data() {
     return {
       blog: {},
+      imageLoading: "https://bulma.io/images/placeholders/640x360.png",
       comments: [],
       images: [],
       error: null,
       commTxt: "",
       editToggle: -1,
-      editCommentMessage: "",
+      editCommentMessage: ""
     };
   },
   mounted() {
     this.getBlogDetail(this.$route.params.id);
   },
+  watch: {},
   methods: {
     getBlogDetail(blogId) {
       axios
         .get(`http://localhost:3000/blogs/${blogId}`)
-        .then((response) => {
+        .then(response => {
           this.blog = response.data.blog;
           this.images = response.data.images;
           this.comments = response.data.comments;
         })
-        .catch((error) => {
+        .catch(error => {
           this.error = error.response.data.message;
         });
     },
@@ -173,26 +208,30 @@ export default {
       axios
         .post(`http://localhost:3000/${this.blog.id}/comments`, {
           comment: this.commTxt,
+          commentById: this.user.id
         })
-        .then((response) => {
+        .then(response => {
           this.commTxt = "";
           this.comments.push(response.data);
         })
-        .catch((error) => {
+        .catch(error => {
           this.error = error.response.data.message;
         });
     },
     saveEditComment(commentId, index) {
       axios
         .put(`http://localhost:3000/comments/${commentId}`, {
-          comment: this.editCommentMessage,
+          comment: this.editCommentMessage
         })
-        .then((response) => {
+        .then(response => {
           this.comments[index].comment = response.data.comment;
           this.editToggle = -1;
         })
-        .catch((error) => {
+        .catch(error => {
           this.error = error.message;
+          if(this.error === "Request failed with status code 403"){
+            alert("คุณไม่มีสิทธิ์แก้ไขคอมเม้นนี้")
+          }
         });
     },
     deleteComment(commentId, index) {
@@ -200,11 +239,11 @@ export default {
       if (result) {
         axios
           .delete(`http://localhost:3000/comments/${commentId}`)
-          .then((response) => {
+          .then(response => {
             console.log(response);
             this.comments.splice(index, 1);
           })
-          .catch((error) => {
+          .catch(error => {
             this.error = error.message;
           });
       }
@@ -212,15 +251,15 @@ export default {
     addLikeComment(commentId) {
       axios
         .put(`http://localhost:3000/comments/addlike/${commentId}`)
-        .then((response) => {
+        .then(response => {
           let selectedComment = this.comments.filter(
-            (e) => e.id === commentId
+            e => e.id === commentId
           )[0];
           console.log(selectedComment);
           selectedComment.like = response.data.like;
           console.log(selectedComment);
         })
-        .catch((error) => (this.error = error.message));
+        .catch(error => (this.error = error.message));
     },
     deleteBlog() {
       const result = confirm(
@@ -229,14 +268,14 @@ export default {
       if (result) {
         axios
           .delete(`http://localhost:3000/blogs/${this.blog.id}`)
-          .then((response) => {
+          .then(response => {
             this.$router.push("/");
           })
-          .catch((error) => {
+          .catch(error => {
             alert(error.response.data.message);
           });
       }
-    },
-  },
+    }
+  }
 };
 </script>

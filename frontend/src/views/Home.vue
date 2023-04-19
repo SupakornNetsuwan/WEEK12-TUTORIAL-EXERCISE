@@ -5,7 +5,12 @@
         <p class="title">My Stories</p>
         <div class="columns">
           <div class="column is-half">
-            <input class="input" type="text" v-model="search" placeholder="Search blog(s)" />
+            <input
+              class="input"
+              type="text"
+              v-model="search"
+              placeholder="Search blog(s)"
+            />
           </div>
           <div class="column is-half">
             <button @click="getBlogs" class="button">Search</button>
@@ -29,21 +34,33 @@
               </div>
               <div class="card-content">
                 <div class="title">{{ blog.title }}</div>
-                <div class="content" style="height: 200px;">{{ shortContent(blog.content) }}</div>
+                <div class="content" style="height: 200px;">
+                  {{ shortContent(blog.content) }}
+                </div>
               </div>
               <footer class="card-footer">
-                <router-link class="card-footer-item" :to="`/blogs/detail/${blog.id}`">Read more...</router-link>
+                <router-link
+                  class="card-footer-item"
+                  :to="`/blogs/detail/${blog.id}`"
+                  >Read more...</router-link
+                >
                 <a class="card-footer-item" @click="addLike(blog.id)">
                   <span class="icon-text">
                     <span class="icon">
                       <i class="far fa-heart"></i>
                     </span>
-                    <span>Like ({{blog.like}})</span>
+                    <span>Like ({{ blog.like }})</span>
                   </span>
                 </a>
                 <a
+                  v-if="isBlogOwner(blog)"
                   class="card-footer-item"
-                  @click="$router.push({name:'update-blog',params:{id:blog.id}})"
+                  @click="
+                    $router.push({
+                      name: 'update-blog',
+                      params: { id: blog.id }
+                    })
+                  "
                 >
                   <span class="icon-text">
                     <span>Edit</span>
@@ -59,14 +76,15 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from "@/plugins/axios";
 // @ is an alias to /src
 export default {
   name: "Home",
+  props: ["user"],
   data() {
     return {
       search: "",
-      blogs: [],
+      blogs: []
     };
   },
   mounted() {
@@ -77,13 +95,13 @@ export default {
       axios
         .get("http://localhost:3000", {
           params: {
-            search: this.search,
-          },
+            search: this.search
+          }
         })
-        .then((response) => {
+        .then(response => {
           this.blogs = response.data;
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     },
@@ -103,14 +121,18 @@ export default {
     addLike(blogId) {
       axios
         .put(`http://localhost:3000/blogs/addlike/${blogId}`)
-        .then((response) => {
-          let selectedBlog = this.blogs.filter((e) => e.id === blogId)[0];
+        .then(response => {
+          let selectedBlog = this.blogs.filter(e => e.id === blogId)[0];
           selectedBlog.like = response.data.like;
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     },
-  },
+    isBlogOwner(blog) {
+      if (!this.user) return false;
+      return blog.create_by_id === this.user.id;
+    }
+  }
 };
 </script>

@@ -45,7 +45,7 @@
           </div>
         </div>
 
-        <button class="button is-primary is-fullwidth">
+        <button @click="submit" class="button is-primary is-fullwidth">
           Login
         </button>
 
@@ -58,13 +58,35 @@
 </template>
 
 <script>
+import axios from "@/plugins/axios";
 export default {
-  data () {
+  data() {
     return {
-      username: '',
-      password: '',
-      error: ''
+      username: "admin",
+      password: "Aa123456",
+      error: ""
+    };
+  },
+  methods: {
+    submit() {
+      const data = {
+        username: this.username,
+        password: this.password
+      };
+
+      axios
+        .post("http://localhost:3000/user/login/", data)
+        .then(res => {
+          const token = res.data.token;
+          localStorage.setItem("token", token);
+          this.$emit("auth-change");
+          this.$router.push({ path: "/" });
+        })
+        .catch(error => {
+          this.error = error.response.data;
+          console.log(error.response.data);
+        });
     }
   }
-}
+};
 </script>

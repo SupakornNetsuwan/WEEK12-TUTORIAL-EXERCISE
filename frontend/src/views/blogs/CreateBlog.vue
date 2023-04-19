@@ -24,7 +24,11 @@
       />
 
       <div v-if="images" class="columns is-multiline">
-        <div v-for="(image, index) in images" :key="image.id" class="column is-one-quarter">
+        <div
+          v-for="(image, index) in images"
+          :key="image.id"
+          class="column is-one-quarter"
+        >
           <div class="card">
             <div class="card-image">
               <figure class="image is-4by3">
@@ -32,7 +36,11 @@
               </figure>
             </div>
             <footer class="card-footer">
-              <a @click="deleteSelectImage(index)" class="card-footer-item has-text-danger">Delete</a>
+              <a
+                @click="deleteSelectImage(index)"
+                class="card-footer-item has-text-danger"
+                >Delete</a
+              >
             </footer>
           </div>
         </div>
@@ -41,14 +49,23 @@
       <div class="field mt-5">
         <label class="label">Title</label>
         <div class="control">
-          <input v-model="titleBlog" class="input" type="text" placeholder="Text input" />
+          <input
+            v-model="titleBlog"
+            class="input"
+            type="text"
+            placeholder="Text input"
+          />
         </div>
       </div>
 
       <div class="field">
         <label class="label">Content</label>
         <div class="control">
-          <textarea v-model="contentBlog" class="textarea" placeholder="Textarea"></textarea>
+          <textarea
+            v-model="contentBlog"
+            class="textarea"
+            placeholder="Textarea"
+          ></textarea>
         </div>
       </div>
 
@@ -77,7 +94,9 @@
           <button @click="submitBlog" class="button is-link">Submit</button>
         </div>
         <div class="control">
-          <button @click="$router.go(-1)" class="button is-link is-light">Cancel</button>
+          <button @click="$router.go(-1)" class="button is-link is-light">
+            Cancel
+          </button>
         </div>
       </div>
     </section>
@@ -85,9 +104,10 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from "@/plugins/axios";
 
 export default {
+  props: ["user"],
   data() {
     return {
       blog: {},
@@ -96,7 +116,7 @@ export default {
       titleBlog: "",
       contentBlog: "",
       pinnedBlog: false,
-      statusBlog: "01",
+      statusBlog: "01"
     };
   },
   methods: {
@@ -118,7 +138,8 @@ export default {
       formData.append("content", this.contentBlog);
       formData.append("pinned", this.pinnedBlog ? 1 : 0);
       formData.append("status", "01");
-      this.images.forEach((image) => {
+      formData.append("createById", this.user.id);
+      this.images.forEach(image => {
         formData.append("myImage", image);
       });
 
@@ -138,12 +159,11 @@ export default {
 
       axios
         .post("http://localhost:3000/blogs", formData)
-        .then((res) => this.$router.push({name: 'home'}))
-        .catch((e) => console.log(e.response.data));
-    },
-  },
+        .then(res => this.$router.push({ name: "home" }))
+        .catch(e => console.log(e.response.data));
+    }
+  }
 };
 </script>
 
-<style>
-</style>
+<style></style>
